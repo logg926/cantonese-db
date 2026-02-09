@@ -49,10 +49,14 @@ export const fetchWorksData = async (): Promise<WorkItem[]> => {
         const idxDur = getIndex(['duration', '時長'], 8);
         const idxPub = getIndex(['publisher', '出版'], 9);
         const idxLink = getIndex(['media link', 'link', 'url', '連結'], 10);
+        const idxPerusalScore = getIndex(['perusal score', 'score'], 11);
+        const idxTextFirst = getIndex(['text-first', 'text first'], 12);
+        const idxTextType = getIndex(['text-type', 'text type'], 13);
         
         // Authors
         const idxAuthorC = getIndex(['text author (c)', '作詞'], 14);
         const idxAuthorE = getIndex(['text author (e)'], 15);
+        const idxOtherLang = getIndex(['other language', 'other lang'], 16);
         
         // Remarks
         const idxRem1 = getIndex(['remarks 1', 'remarks'], 17);
@@ -85,6 +89,10 @@ export const fetchWorksData = async (): Promise<WorkItem[]> => {
                 publisher: val(idxPub) || '',
                 link: val(idxLink) || '',
                 remarks: remarks,
+                perusalScore: val(idxPerusalScore) || '',
+                textFirst: val(idxTextFirst).toLowerCase() === 'yes',
+                textType: val(idxTextType) || '',
+                otherLanguages: val(idxOtherLang) || '',
             };
         });
 

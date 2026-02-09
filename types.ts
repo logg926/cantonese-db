@@ -12,6 +12,11 @@ export interface WorkItem {
     publisher: string;
     link: string;
     remarks: string;
+    // New fields
+    perusalScore: string;    // URL to view score
+    textFirst: boolean;      // Whether lyrics came before music
+    textType: string;        // e.g. "古詩, 唐詩"
+    otherLanguages: string;  // Other available languages
 }
 
 export interface FilterState {

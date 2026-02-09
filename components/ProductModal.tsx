@@ -27,12 +27,18 @@ const ProductModal: React.FC<ProductModalProps> = ({ item, onClose }) => {
                 </div>
 
                 {/* Right: Content */}
-                <div className="w-full md:w-7/12 flex flex-col h-full bg-white">
-                    <div className="flex-1 overflow-y-auto p-8 md:p-12 custom-scrollbar">
+                <div className="w-full md:w-7/12 flex flex-col bg-white overflow-hidden max-h-[60vh] md:max-h-full">
+                    <div className="flex-1 overflow-y-auto p-8 md:p-12 custom-scrollbar min-h-0">
                         
-                        <div className="flex items-center gap-3 mb-4">
+                        <div className="flex items-center gap-2 mb-4 flex-wrap">
                             <span className="px-2 py-1 bg-royal-900 text-white text-[10px] font-bold font-mono uppercase tracking-wider">{item.voice || 'N/A'}</span>
                             <span className="px-2 py-1 bg-gold-400 text-white text-[10px] font-bold font-mono">{item.year || 'N/A'}</span>
+                            {item.textType && (
+                                <span className="px-2 py-1 bg-emerald-600 text-white text-[10px] font-bold font-mono">{item.textType}</span>
+                            )}
+                            {item.textFirst && (
+                                <span className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold font-mono">先詞後曲</span>
+                            )}
                         </div>
 
                         <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-2 leading-tight">{item.titleC}</h2>
@@ -55,6 +61,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ item, onClose }) => {
                                 <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Duration</h4>
                                 <p className="text-sm text-gray-600 font-mono">{item.duration || "N/A"}</p>
                             </div>
+                            {item.otherLanguages && (
+                                <div className="border-l-2 border-gray-200 pl-4">
+                                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Other Languages</h4>
+                                    <p className="text-sm text-gray-600">{item.otherLanguages}</p>
+                                </div>
+                            )}
                         </div>
 
                         <div className="bg-gray-50 p-6 rounded mb-8">
@@ -64,16 +76,27 @@ const ProductModal: React.FC<ProductModalProps> = ({ item, onClose }) => {
 
                     </div>
 
-                    <div className="p-6 border-t border-gray-100 flex items-center gap-4 bg-gray-50">
+                    <div className="p-6 border-t border-gray-100 flex items-center gap-4 bg-gray-50 flex-wrap">
                         {item.link ? (
-                            <a href={item.link} target="_blank" rel="noreferrer" className="flex-1 bg-royal-900 text-white py-4 text-center font-bold hover:bg-royal-800 transition-all flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 rounded">
+                            <a href={item.link} target="_blank" rel="noreferrer" className="flex-1 min-w-[200px] bg-royal-900 text-white py-4 text-center font-bold hover:bg-royal-800 transition-all flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 rounded">
                                 <i className="fa-solid fa-play"></i>
                                 <span>觀看演出 / 聆聽錄音</span>
                             </a>
                         ) : (
-                            <button disabled className="flex-1 bg-gray-300 text-white py-4 text-center font-bold cursor-not-allowed flex items-center justify-center gap-3 rounded">
-                                <i className="fa-solid fa-play-slash"></i>
-                                <span>暫無錄音 / Recording Unavailable</span>
+                            <button disabled className="flex-1 min-w-[200px] bg-gray-300 text-white py-4 text-center font-bold cursor-not-allowed flex items-center justify-center gap-3 rounded">
+                                <i className="fa-solid fa-ban"></i>
+                                <span>暫無錄音</span>
+                            </button>
+                        )}
+                        {item.perusalScore ? (
+                            <a href={item.perusalScore} target="_blank" rel="noreferrer" className="flex-1 min-w-[200px] bg-emerald-600 text-white py-4 text-center font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 rounded">
+                                <i className="fa-solid fa-file-pdf"></i>
+                                <span>瀏覽樂譜</span>
+                            </a>
+                        ) : (
+                            <button disabled className="flex-1 min-w-[200px] bg-gray-300 text-white py-4 text-center font-bold cursor-not-allowed flex items-center justify-center gap-3 rounded">
+                                <i className="fa-solid fa-file-circle-xmark"></i>
+                                <span>暫無樂譜</span>
                             </button>
                         )}
                     </div>
