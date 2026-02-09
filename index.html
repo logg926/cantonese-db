@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>粵語現代音樂研究 | Decoding Cantonese Creativity</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -23,10 +26,10 @@
                     colors: {
                         royal: {
                             900: '#2E1065', // Deepest Purple
-                            800: '#4C1D95', 
+                            800: '#4C1D95',
                             700: '#5B21B6',
                             100: '#F3E8FF',
-                            50:  '#FAF5FF'
+                            50: '#FAF5FF'
                         },
                         gold: {
                             600: '#854d0e',
@@ -77,11 +80,13 @@
             width: 6px;
             height: 6px;
         }
+
         ::-webkit-scrollbar-track {
-            background: #F3E8FF; 
+            background: #F3E8FF;
         }
+
         ::-webkit-scrollbar-thumb {
-            background: #D4AF37; 
+            background: #D4AF37;
             border-radius: 3px;
         }
 
@@ -101,6 +106,7 @@
             transition: all 0.2s;
             flex-shrink: 0;
         }
+
         .dcc-checkbox::before {
             content: "";
             width: 0.65em;
@@ -111,15 +117,17 @@
             transform-origin: center;
             clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
         }
+
         .dcc-checkbox:checked {
             background-color: #4C1D95;
             border-color: #4C1D95;
         }
+
         .dcc-checkbox:checked::before {
             transform: scale(1);
         }
     </style>
-<script type="importmap">
+    <script type="importmap">
 {
   "imports": {
     "react/": "https://esm.sh/react@^19.2.4/",
@@ -131,8 +139,10 @@
 }
 </script>
 </head>
+
 <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>
