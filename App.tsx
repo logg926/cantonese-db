@@ -22,6 +22,7 @@ const App: React.FC = () => {
     composer: []
   });
   const [sort, setSort] = useState<SortOption>('year-desc');
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -160,6 +161,8 @@ const App: React.FC = () => {
           filters={filters} 
           setFilters={setFilters} 
           composers={composers}
+          mobileOpen={mobileFilterOpen}
+          onMobileClose={() => setMobileFilterOpen(false)}
         />
 
         <main className="flex-1 p-6 lg:p-10 bg-white relative min-h-screen">
@@ -181,6 +184,12 @@ const App: React.FC = () => {
                 </div>
                 
                 <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => setMobileFilterOpen(true)}
+                    className="lg:hidden flex items-center gap-2 px-4 py-2 bg-royal-50 text-royal-800 rounded text-sm font-medium hover:bg-royal-100 transition-colors"
+                  >
+                    <i className="fa-solid fa-sliders"></i> 篩選
+                  </button>
                   <div className="relative">
                     <select 
                         value={sort} 

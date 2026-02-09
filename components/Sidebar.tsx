@@ -6,9 +6,11 @@ interface SidebarProps {
     setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
     composers: { c: string; e: string }[];
     visible: boolean;
+    mobileOpen?: boolean;
+    onMobileClose?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ filters, setFilters, composers, visible }) => {
+const Sidebar: React.FC<SidebarProps> = ({ filters, setFilters, composers, visible, mobileOpen, onMobileClose }) => {
     const [composerSearch, setComposerSearch] = useState('');
 
     const toggleFilter = (category: keyof FilterState, value: string) => {
@@ -38,7 +40,30 @@ const Sidebar: React.FC<SidebarProps> = ({ filters, setFilters, composers, visib
     if (!visible) return null;
 
     return (
-        <aside className="w-80 flex-shrink-0 border-r border-gray-100 bg-[#FAFAFA] p-6 hidden lg:block overflow-y-auto h-[calc(100vh-80px)] sticky top-20 custom-scrollbar transition-all duration-300">
+        <>
+        {/* Mobile Overlay */}
+        {mobileOpen && (
+            <div 
+                className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+                onClick={onMobileClose}
+            />
+        )}
+        
+        {/* Sidebar - Desktop: static, Mobile: slide-in panel */}
+        <aside className={`
+            w-80 flex-shrink-0 border-r border-gray-100 bg-[#FAFAFA] p-6 overflow-y-auto custom-scrollbar transition-all duration-300
+            lg:block lg:h-[calc(100vh-80px)] lg:sticky lg:top-20
+            fixed top-0 right-0 h-full z-50
+            ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
+            ${!mobileOpen && 'hidden lg:block'}
+        `}>
+            {/* Mobile Close Button */}
+            <button 
+                onClick={onMobileClose}
+                className="lg:hidden absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700"
+            >
+                <i className="fa-solid fa-xmark text-lg"></i>
+            </button>
             <div className="flex items-center justify-between mb-6">
                 <h3 className="font-serif text-lg font-bold text-royal-900 flex items-center gap-2">
                     <i className="fa-solid fa-sliders text-sm text-gold-500"></i> 篩選 Filters
@@ -147,6 +172,7 @@ const Sidebar: React.FC<SidebarProps> = ({ filters, setFilters, composers, visib
                 </div>
             </div>
         </aside>
+        </>
     );
 };
 
