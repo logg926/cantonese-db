@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FilterState } from "../types";
+import { matchesSearch } from "../utils/search";
 
 interface SidebarProps {
   filters: FilterState;
@@ -32,17 +33,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters((prev) => ({ ...prev, search: e.target.value.toLowerCase() }));
+    setFilters((prev) => ({ ...prev, search: e.target.value }));
   };
 
   const clearFilters = () => {
-    setFilters({ search: "", voice: [], acc: [], inst: [], composer: [] });
+    setFilters({ search: "", voice: [], accompaniment: [], composer: [] });
+    setComposerSearch("");
   };
 
-  const filteredComposers = composers.filter(
-    (item) =>
-      item.c.toLowerCase().includes(composerSearch.toLowerCase()) ||
-      item.e.toLowerCase().includes(composerSearch.toLowerCase()),
+  const filteredComposers = composers.filter((item) =>
+    matchesSearch(composerSearch, [item.c, item.e]),
   );
 
   if (!visible) return null;
@@ -70,6 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Mobile Close Button */}
         <button
           onClick={onMobileClose}
+          aria-label="關閉篩選 Close filters"
           className="lg:hidden absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700"
         >
           <i className="fa-solid fa-xmark text-lg"></i>
@@ -90,7 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="mb-6">
           <input
             type="text"
-            placeholder="搜尋作品名稱..."
+            placeholder="關鍵字搜尋 Keyword Search…"
             value={filters.search}
             onChange={handleSearch}
             className="w-full bg-white border border-gray-200 rounded text-sm py-2 px-3 focus:outline-none focus:border-royal-800 focus:ring-1 focus:ring-royal-800 transition-all placeholder-gray-400"
@@ -103,7 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             聲部 Voice Type
           </h4>
           <div className="space-y-2">
-            {["SATB", "SSAA", "TTBB", "Treble"].map((v) => (
+            {["Mixed", "High", "Low", "Unison"].map((v) => (
               <label
                 key={v}
                 className="flex items-center gap-3 cursor-pointer hover:bg-white p-1 rounded transition-colors"
@@ -115,13 +116,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                   onChange={() => toggleFilter("voice", v)}
                 />
                 <span className="text-sm text-gray-700">
-                  {v === "SATB"
-                    ? "混聲 (SATB)"
-                    : v === "SSAA"
-                      ? "女聲 (SSAA/SA)"
-                      : v === "TTBB"
-                        ? "男聲 (TTBB/TB)"
-                        : "童聲 (Treble)"}
+                  {v === "Mixed"
+                    ? "混聲合唱 Mixed Choir — SAB, SATB, etc."
+                    : v === "High"
+                      ? "高音聲部 High Voices — SA, SSA, etc."
+                      : v === "Low"
+                        ? "低音聲部 Low Voices — TB, TTB, etc."
+                        : "單聲部 Unison"}
                 </span>
               </label>
             ))}
@@ -134,7 +135,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             伴奏 Accompaniment
           </h4>
           <div className="space-y-2">
-            {["A cappella", "Accompanied"].map((v) => (
+            {["A cappella", "Piano", "Organ", "Western", "Chinese"].map((v) => (
               <label
                 key={v}
                 className="flex items-center gap-3 cursor-pointer hover:bg-white p-1 rounded transition-colors"
@@ -142,34 +143,19 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <input
                   type="checkbox"
                   className="dcc-checkbox"
-                  checked={filters.acc.includes(v)}
-                  onChange={() => toggleFilter("acc", v)}
+                  checked={filters.accompaniment.includes(v)}
+                  onChange={() => toggleFilter("accompaniment", v)}
                 />
                 <span className="text-sm text-gray-700">
                   {v === "A cappella"
-                    ? "無伴奏 (A cappella)"
-                    : "有伴奏 (Accompanied)"}
-                </span>
-              </label>
-            ))}
-            <div className="border-t border-gray-100 my-2 pt-2"></div>
-            {["Piano", "Orchestra", "Chinese"].map((v) => (
-              <label
-                key={v}
-                className="flex items-center gap-3 cursor-pointer hover:bg-white p-1 rounded transition-colors"
-              >
-                <input
-                  type="checkbox"
-                  className="dcc-checkbox"
-                  checked={filters.inst.includes(v)}
-                  onChange={() => toggleFilter("inst", v)}
-                />
-                <span className="text-sm text-gray-700">
-                  {v === "Piano"
-                    ? "鋼琴 (Piano)"
-                    : v === "Orchestra"
-                      ? "管弦樂 (Orchestra)"
-                      : "中樂 (Chinese Inst.)"}
+                    ? "無伴奏 A cappella"
+                    : v === "Piano"
+                      ? "鋼琴 Piano"
+                      : v === "Organ"
+                        ? "管風琴 Organ"
+                        : v === "Western"
+                          ? "西樂 Western Inst."
+                          : "中樂 Chinese Inst."}
                 </span>
               </label>
             ))}
@@ -186,7 +172,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="relative mb-3">
             <input
               type="text"
-              placeholder="搜尋作曲家..."
+              placeholder="作曲家搜尋 Composer Search..."
               value={composerSearch}
               onChange={(e) => setComposerSearch(e.target.value)}
               className="w-full text-xs p-2 border border-gray-200 rounded bg-white focus:border-royal-800 outline-none"

@@ -78,9 +78,9 @@ export const fetchWorksData = async (): Promise<WorkItem[]> => {
             return {
                 id: val(idxId) || `row-${index}`,
                 year: parseInt(val(idxYear)) || 0,
-                composerC: val(idxCompC) || 'Unknown Composer',
+                composerC: val(idxCompC) || '作曲家不詳 Unknown Composer',
                 composerE: val(idxCompE) || '',
-                titleC: val(idxTitleC) || 'Unknown Title',
+                titleC: val(idxTitleC) || '作品名稱不詳 Unknown Title',
                 titleE: val(idxTitleE) || '',
                 voice: val(idxVoice) || '',
                 instrument: val(idxInst) || '',

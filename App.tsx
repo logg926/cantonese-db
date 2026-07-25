@@ -4,6 +4,23 @@ import { WorkItem, FilterState, ViewMode, SortOption } from "./types";
 import Sidebar from "./components/Sidebar";
 import CoverArt from "./components/CoverArt";
 import ProductModal from "./components/ProductModal";
+import { matchesSearch } from "./utils/search";
+import {
+  matchesAccompanimentFilters,
+  matchesVoiceFilters,
+} from "./utils/filters";
+
+const FILTER_LABELS: Record<string, string> = {
+  Mixed: "混聲合唱 Mixed Choir",
+  High: "高音聲部 High Voices",
+  Low: "低音聲部 Low Voices",
+  Unison: "單聲部 Unison",
+  "A cappella": "無伴奏 A cappella",
+  Piano: "鋼琴 Piano",
+  Organ: "管風琴 Organ",
+  Western: "西樂 Western Inst.",
+  Chinese: "中樂 Chinese Inst.",
+};
 
 const App: React.FC = () => {
   const [data, setData] = useState<WorkItem[]>([]);
@@ -17,8 +34,7 @@ const App: React.FC = () => {
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     voice: [],
-    acc: [],
-    inst: [],
+    accompaniment: [],
     composer: [],
   });
   const [sort, setSort] = useState<SortOption>("year-desc");
@@ -49,13 +65,20 @@ const App: React.FC = () => {
     return data
       .filter((item) => {
         // Search
-        const s = filters.search.toLowerCase();
-        const matchSearch =
-          !s ||
-          item.titleC?.includes(s) ||
-          item.titleE?.toLowerCase().includes(s) ||
-          item.composerC?.includes(s) ||
-          (item.composerE && item.composerE.toLowerCase().includes(s));
+        const matchSearch = matchesSearch(filters.search, [
+          item.titleC,
+          item.titleE,
+          item.composerC,
+          item.composerE,
+          item.author,
+          item.textType,
+          item.voice,
+          item.instrument,
+          item.publisher,
+          item.remarks,
+          item.otherLanguages,
+          item.year,
+        ]);
 
         // Composer
         const matchComp =
@@ -63,51 +86,18 @@ const App: React.FC = () => {
           filters.composer.includes(item.composerC);
 
         // Voice
-        let matchVoice = true;
-        if (filters.voice.length > 0) {
-          const v = (item.voice || "").toLowerCase();
-          matchVoice = filters.voice.some((r) => {
-            if (r === "SATB") return v.includes("satb") || v.includes("mixed");
-            if (r === "SSAA")
-              return v.includes("ssaa") || v.includes("sa ") || v === "sa";
-            if (r === "TTBB")
-              return v.includes("ttbb") || v.includes("tb ") || v === "tb";
-            if (r === "Treble")
-              return v.includes("treble") || v.includes("children");
-            return false;
-          });
-        }
+        const matchVoice = matchesVoiceFilters(
+          item.voice || "",
+          filters.voice,
+        );
 
         // Accompaniment
-        let matchAcc = true;
-        const i = (item.instrument || "").toLowerCase();
-        const isAcappella =
-          i.includes("a cappella") || i === "" || i === "none";
+        const matchAccompaniment = matchesAccompanimentFilters(
+          item.instrument || "",
+          filters.accompaniment,
+        );
 
-        if (filters.acc.length > 0) {
-          matchAcc = false;
-          if (filters.acc.includes("A cappella") && isAcappella)
-            matchAcc = true;
-          if (filters.acc.includes("Accompanied") && !isAcappella)
-            matchAcc = true;
-        }
-
-        let matchInst = true;
-        if (filters.inst.length > 0) {
-          matchInst = filters.inst.some((req) => {
-            if (req === "Piano") return i.includes("piano");
-            if (req === "Orchestra") return i.includes("orchestra");
-            if (req === "Chinese")
-              return (
-                i.includes("chinese") ||
-                i.includes("erhu") ||
-                i.includes("zheng")
-              );
-            return false;
-          });
-        }
-
-        return matchSearch && matchComp && matchVoice && matchAcc && matchInst;
+        return matchSearch && matchComp && matchVoice && matchAccompaniment;
       })
       .sort((a, b) => {
         if (sort === "year-desc") return (b.year || 0) - (a.year || 0);
@@ -142,20 +132,23 @@ const App: React.FC = () => {
     <div className="font-sans antialiased min-h-screen flex flex-col bg-white text-ink-900">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/95">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+        <div className="max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-8">
           <div
-            className="flex items-center gap-4 cursor-pointer flex-shrink-0"
+            className="flex items-center gap-2.5 sm:gap-4 cursor-pointer min-w-0"
             onClick={() => window.location.reload()}
           >
-            <div className="w-10 h-10 bg-royal-900 text-white flex items-center justify-center font-serif text-xl font-bold rounded shadow-md border border-royal-700">
-              D
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-royal-900 text-white flex items-center justify-center font-serif text-xl font-bold rounded shadow-md border border-royal-700 flex-shrink-0">
+              合
             </div>
-            <div className="flex flex-col">
-              <h1 className="font-serif text-xl font-bold text-royal-900 leading-none tracking-tight">
-                粵語現代音樂研究
+            <div className="flex flex-col min-w-0">
+              <h1 className="font-serif text-base sm:text-xl font-bold text-royal-900 leading-none tracking-tight whitespace-nowrap">
+                粵語合唱音樂資料庫
               </h1>
-              <span className="text-[10px] font-mono tracking-[0.2em] text-gold-500 uppercase mt-1">
-                Decoding Cantonese Creativity
+              <span className="text-[11px] font-medium tracking-[0.08em] text-royal-700 mt-1">
+                Cantonese Choral Database
+              </span>
+              <span className="text-[8px] sm:text-[9px] leading-tight font-mono tracking-[0.04em] sm:tracking-[0.06em] text-gold-600 mt-0.5 max-w-[190px] sm:max-w-none">
+                由粵語合唱作品庫提供 Powered by Cantonese Choral Comp
               </span>
             </div>
           </div>
@@ -165,20 +158,20 @@ const App: React.FC = () => {
               onClick={() => setView("works")}
               className={`nav-tab text-sm tracking-widest uppercase ${view === "works" ? "active text-royal-800 font-bold border-b-2 border-royal-800" : "text-gray-500"}`}
             >
-              作品目錄 Works
+              作品目錄 Work Listing
             </button>
             <button
               onClick={() => setView("composers")}
               className={`nav-tab text-sm tracking-widest uppercase ${view === "composers" ? "active text-royal-800 font-bold border-b-2 border-royal-800" : "text-gray-500"}`}
             >
-              作曲家 Composers
+              作曲家 Composer
             </button>
           </div>
 
           <div className="flex items-center gap-4 flex-shrink-0">
             <div className="text-right hidden xl:block mr-4">
               <div className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">
-                Total Archive
+                典藏總數 Total Archive
               </div>
               <div className="text-xl font-mono font-bold text-royal-900 leading-none">
                 {data.length}
@@ -188,10 +181,11 @@ const App: React.FC = () => {
               href="https://forms.gle/bineVPkwUr8DxXQq6"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-royal-900 text-white px-5 py-2.5 rounded text-sm font-medium hover:bg-royal-800 transition-all shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5"
+              aria-label="提交資料 Submit Data"
+              className="bg-royal-900 text-white px-3 sm:px-5 py-2.5 rounded text-sm font-medium hover:bg-royal-800 transition-all shadow-lg flex items-center gap-2 transform hover:-translate-y-0.5 flex-shrink-0"
             >
               <i className="fa-solid fa-cloud-arrow-up"></i>{" "}
-              <span className="hidden sm:inline">提交資料</span>
+              <span className="hidden sm:inline">提交資料 Submit Data</span>
             </a>
           </div>
         </div>
@@ -209,6 +203,21 @@ const App: React.FC = () => {
         />
 
         <main className="flex-1 p-6 lg:p-10 bg-white relative min-h-screen">
+          <div className="md:hidden grid grid-cols-2 mb-6 border-b border-gray-200">
+            <button
+              onClick={() => setView("works")}
+              className={`py-3 text-xs tracking-wide ${view === "works" ? "text-royal-800 font-bold border-b-2 border-royal-800" : "text-gray-500"}`}
+            >
+              作品目錄 Work Listing
+            </button>
+            <button
+              onClick={() => setView("composers")}
+              className={`py-3 text-xs tracking-wide ${view === "composers" ? "text-royal-800 font-bold border-b-2 border-royal-800" : "text-gray-500"}`}
+            >
+              作曲家 Composer
+            </button>
+          </div>
+
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <i className="fa-solid fa-circle-notch fa-spin text-3xl text-royal-200"></i>
@@ -218,33 +227,51 @@ const App: React.FC = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 border-b border-gray-100 pb-6">
                 <div>
                   <h2 className="font-serif text-3xl font-bold text-royal-900 mb-1">
-                    典藏作品目錄
+                    作品目錄 Work Listing
                   </h2>
                   <div className="flex gap-2 text-sm text-gray-500 font-sans items-center">
                     <span>顯示</span>
                     <span className="font-bold text-royal-800 bg-royal-50 px-2 rounded">
                       {filteredData.length}
                     </span>
-                    <span>筆結果</span>
+                    <span>
+                      筆結果 / Showing {filteredData.length} results
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3 max-w-full">
                   <button
                     onClick={() => setMobileFilterOpen(true)}
                     className="lg:hidden flex items-center gap-2 px-4 py-2 bg-royal-50 text-royal-800 rounded text-sm font-medium hover:bg-royal-100 transition-colors"
                   >
-                    <i className="fa-solid fa-sliders"></i> 篩選
+                    <i className="fa-solid fa-sliders"></i> 篩選 Filters
                   </button>
-                  <div className="relative">
+                  <span className="hidden sm:inline text-xs font-bold text-gray-500">
+                    排序 Sort
+                  </span>
+                  <div className="relative max-w-full">
+                    <label
+                      htmlFor="work-sort"
+                      className="sr-only"
+                    >
+                      排序 Sort
+                    </label>
                     <select
+                      id="work-sort"
                       value={sort}
                       onChange={(e) => setSort(e.target.value as SortOption)}
-                      className="appearance-none bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-700 py-2 pl-4 pr-10 rounded text-sm font-medium cursor-pointer focus:outline-none focus:ring-1 focus:ring-royal-800 transition-colors"
+                      className="appearance-none max-w-full bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-700 py-2 pl-4 pr-10 rounded text-sm font-medium cursor-pointer focus:outline-none focus:ring-1 focus:ring-royal-800 transition-colors"
                     >
-                      <option value="year-desc">年份 (新 → 舊)</option>
-                      <option value="year-asc">年份 (舊 → 新)</option>
-                      <option value="title-asc">標題 (A - Z)</option>
+                      <option value="year-desc">
+                        年份（新至舊）Year (Newest to Oldest)
+                      </option>
+                      <option value="year-asc">
+                        年份（舊至新）Year (Oldest to Newest)
+                      </option>
+                      <option value="title-asc">
+                        作品名稱（A–Z）Title (A–Z)
+                      </option>
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
                       <i className="fa-solid fa-arrow-down-short-wide text-xs"></i>
@@ -257,8 +284,7 @@ const App: React.FC = () => {
               <div className="flex flex-wrap gap-2 mb-6 min-h-[0px]">
                 {[
                   ...filters.voice,
-                  ...filters.acc,
-                  ...filters.inst,
+                  ...filters.accompaniment,
                   ...filters.composer,
                 ].map((tag, idx) => (
                   <button
@@ -266,15 +292,14 @@ const App: React.FC = () => {
                     onClick={() => {
                       if (filters.voice.includes(tag))
                         removeFilter("voice", tag);
-                      else if (filters.acc.includes(tag))
-                        removeFilter("acc", tag);
-                      else if (filters.inst.includes(tag))
-                        removeFilter("inst", tag);
+                      else if (filters.accompaniment.includes(tag))
+                        removeFilter("accompaniment", tag);
                       else removeFilter("composer", tag);
                     }}
                     className="px-3 py-1 bg-royal-50 border border-royal-100 text-royal-800 text-xs font-bold rounded-full flex items-center gap-2 hover:bg-royal-100"
                   >
-                    {tag} <i className="fa-solid fa-xmark"></i>
+                    {FILTER_LABELS[tag] ?? tag}{" "}
+                    <i className="fa-solid fa-xmark"></i>
                   </button>
                 ))}
               </div>
@@ -295,12 +320,24 @@ const App: React.FC = () => {
                       <h3 className="font-serif font-bold text-gray-900 text-sm truncate group-hover:text-royal-800 transition-colors">
                         {item.titleC}
                       </h3>
+                      <p className="text-xs text-gray-500 truncate mt-0.5">
+                        {item.titleE || "英文標題不詳 English title N/A"}
+                      </p>
                       <div className="flex justify-between items-center mt-1">
-                        <span className="text-[10px] text-gray-500 font-sans uppercase tracking-wide truncate max-w-[60%]">
+                        <span className="text-[10px] text-gray-500 font-sans tracking-wide truncate max-w-[70%]">
                           {item.composerC}
+                          {item.composerE && ` ${item.composerE}`}
                         </span>
                         <span className="text-[10px] font-mono text-gray-400 bg-gray-100 px-1 rounded whitespace-nowrap">
                           {item.voice}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[9px] text-gray-400">
+                        <span>
+                          錄音 Audio {item.link ? "✓" : "N/A"}
+                        </span>
+                        <span>
+                          樂譜 Score {item.perusalScore ? "✓" : "N/A"}
                         </span>
                       </div>
                     </div>
@@ -314,34 +351,30 @@ const App: React.FC = () => {
                     <i className="fa-solid fa-music text-3xl text-gray-300"></i>
                   </div>
                   <p className="text-gray-500 text-sm">
-                    沒有找到符合條件的作品
+                    沒有找到符合條件的作品 No matching works found
                   </p>
                   <button
                     onClick={() =>
                       setFilters({
                         search: "",
                         voice: [],
-                        acc: [],
-                        inst: [],
+                        accompaniment: [],
                         composer: [],
                       })
                     }
                     className="mt-4 text-royal-800 text-sm font-bold hover:underline"
                   >
-                    清除篩選
+                    清除篩選 Clear Filters
                   </button>
                 </div>
               )}
             </div>
           ) : (
             <div className="animate-fade-in">
-              <div className="mb-10 text-center max-w-2xl mx-auto">
-                <h2 className="font-serif text-4xl font-bold text-royal-900 mb-4">
-                  作曲家名錄
+              <div className="mb-8 text-center max-w-2xl mx-auto">
+                <h2 className="font-serif text-4xl font-bold text-royal-900">
+                  作曲家 Composer
                 </h2>
-                <p className="text-gray-500">
-                  匯集香港當代最具影響力的合唱音樂創作者。
-                </p>
               </div>
 
               <div className="mb-8 max-w-md mx-auto relative">
@@ -349,7 +382,7 @@ const App: React.FC = () => {
                   type="text"
                   value={compGridSearch}
                   onChange={(e) => setCompGridSearch(e.target.value)}
-                  placeholder="搜尋作曲家姓名..."
+                  placeholder="姓名搜尋 Name Search..."
                   className="w-full bg-gray-50 border-b-2 border-gray-200 text-center text-lg py-3 focus:outline-none focus:border-royal-800 focus:bg-white transition-all placeholder-gray-400 font-serif"
                 />
               </div>
@@ -357,9 +390,7 @@ const App: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 {composerList
                   .filter(
-                    (c) =>
-                      c.c.includes(compGridSearch) ||
-                      c.e.toLowerCase().includes(compGridSearch.toLowerCase()),
+                    (c) => matchesSearch(compGridSearch, [c.c, c.e]),
                   )
                   .map((c) => (
                     <div
@@ -381,7 +412,7 @@ const App: React.FC = () => {
                         {c.e}
                       </p>
                       <span className="text-[10px] font-mono bg-white border border-gray-200 px-2 py-1 rounded-full text-gray-400 group-hover:border-royal-200 group-hover:text-royal-800 transition-colors">
-                        {c.count} Works
+                        作品數 Works: {c.count}
                       </span>
                     </div>
                   ))}

@@ -22,8 +22,7 @@ export interface WorkItem {
 export interface FilterState {
     search: string;
     voice: string[];
-    acc: string[];
-    inst: string[];
+    accompaniment: string[];
     composer: string[];
 }
 

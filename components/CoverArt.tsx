@@ -40,7 +40,7 @@ const CoverArt: React.FC<CoverArtProps> = ({ item }) => {
                             <p className={`text-[10px] font-sans uppercase tracking-widest opacity-80 ${t.text}`}>{item.composerE}</p>
                         </div>
                         <div className={`absolute top-4 right-4 border border-current px-1.5 py-0.5 text-[10px] font-mono ${t.text} opacity-60`}>
-                            {item.year || 'N/A'}
+                            {item.year || '年份不詳 Year N/A'}
                         </div>
                     </>
                 );
@@ -64,7 +64,7 @@ const CoverArt: React.FC<CoverArtProps> = ({ item }) => {
                     <div className={`absolute inset-4 border border-current opacity-30 ${t.text} flex flex-col items-center justify-center text-center p-4`}>
                         <div className={`w-1 h-8 bg-current opacity-50 mb-4 ${t.text}`}></div>
                         <h3 className={`text-2xl font-serif font-bold ${t.text} mb-2`}>{item.titleC}</h3>
-                        <p className={`text-[9px] uppercase tracking-widest ${t.text} opacity-70`}>{item.titleE}</p>
+                        <p className={`text-[9px] uppercase tracking-widest ${t.text} opacity-70`}>{item.titleE || '英文標題不詳 English title N/A'}</p>
                         <div className={`absolute bottom-2 font-mono text-[9px] ${t.text} opacity-50`}>{item.composerC}</div>
                     </div>
                 );

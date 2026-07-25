@@ -24,7 +24,7 @@ const SubmitModal: React.FC<SubmitModalProps> = ({ isOpen, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="提交新資料 Submit new entry">
             <div className="absolute inset-0 bg-royal-900/60 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
             
             <div className="relative z-10 pointer-events-auto bg-white w-full max-w-3xl rounded-lg shadow-2xl overflow-hidden transform flex flex-col max-h-[90vh] animate-fade-in">
@@ -32,10 +32,9 @@ const SubmitModal: React.FC<SubmitModalProps> = ({ isOpen, onClose }) => {
                 {/* Header */}
                 <div className="px-8 py-5 border-b border-gray-100 flex items-center justify-between bg-gray-50">
                     <div>
-                        <h2 className="font-serif text-xl font-bold text-royal-900">提交新研究資料</h2>
-                        <p className="text-xs text-gray-500 mt-0.5 font-mono uppercase tracking-wide">Submit New Entry</p>
+                        <h2 className="font-serif text-xl font-bold text-royal-900">提交新資料 Submit New Entry</h2>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-royal-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200">
+                    <button onClick={onClose} aria-label="關閉 Close" className="text-gray-400 hover:text-royal-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200">
                         <i className="fa-solid fa-times text-lg"></i>
                     </button>
                 </div>
@@ -50,11 +49,11 @@ const SubmitModal: React.FC<SubmitModalProps> = ({ isOpen, onClose }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">作品中文標題 Title (Chi)</label>
-                                    <input type="text" className="form-input w-full p-2 border rounded" required placeholder="例如：落花流水" />
+                                    <input type="text" className="form-input w-full p-2 border rounded" required placeholder="例如：落花流水 Example: Falling Flowers" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">作品英文標題 Title (Eng)</label>
-                                    <input type="text" className="form-input w-full p-2 border rounded" placeholder="e.g. Falling Flowers" />
+                                    <input type="text" className="form-input w-full p-2 border rounded" placeholder="例如：Falling Flowers Example" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">創作年份 Year</label>
@@ -95,7 +94,7 @@ const SubmitModal: React.FC<SubmitModalProps> = ({ isOpen, onClose }) => {
                     >
                         {status === 'loading' && <i className="fa-solid fa-circle-notch fa-spin"></i>}
                         {status === 'success' && <i className="fa-solid fa-check"></i>}
-                        <span>{status === 'loading' ? '處理中...' : status === 'success' ? '提交成功' : '提交資料 Submit'}</span>
+                        <span>{status === 'loading' ? '處理中 Processing...' : status === 'success' ? '提交成功 Submitted' : '提交資料 Submit'}</span>
                     </button>
                 </div>
             </div>
