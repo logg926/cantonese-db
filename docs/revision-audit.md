@@ -39,3 +39,7 @@ Source: [2026-27 Database and Generator Revisions](https://docs.google.com/docum
 The source contains nonnumeric durations (including annotated unspecified values and one alternative-duration entry). These remain visible as unspecified rather than being interpreted with an arbitrary `parseFloat` value. The source sheet itself is not modified. Media placeholders such as issuu / OUT OF PRINT are not usable preview URLs and are excluded from Explore; modal buttons show unavailable for these entries.
 
 The Melody Generator and converter changes belong to the separate cantonese-v4 project and are not included in this repository change.
+
+## Production verification
+
+Revision a8998f9 reached the production domain through automatic deployment after push. Chrome confirmed 233 default works, 61 audio, 34 score, 2 both, IDs 286/001 at the two entry-sort extremes, all 286 at 10+, and correct modal links/duration. The final 390px production check found a long voice label overflowing its card; the follow-up constrains that badge while preserving its complete text in the detail modal.

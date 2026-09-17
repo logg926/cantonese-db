@@ -337,7 +337,7 @@ const App: React.FC = () => {
                           {item.composerC}
                           {item.composerE && ` ${item.composerE}`}
                         </span>
-                        <span className="text-[10px] font-sans text-gray-400 bg-gray-100 px-1 rounded whitespace-nowrap">
+                        <span title={item.voice} className="min-w-0 max-w-[50%] truncate text-[10px] font-sans text-gray-400 bg-gray-100 px-1 rounded">
                           {item.voice}
                         </span>
                       </div>

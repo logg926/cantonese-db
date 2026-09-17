@@ -11,4 +11,4 @@
 - [x] Place year badge consistently on all four covers, replace card media status with year/duration; numeric duration + min and unknown = unspecified also in modal.
 - [x] Apply exact voice labels and Instruments; verify prior keyword/composer search and accompaniment behaviour.
 - [x] Run test/typecheck/build; Chrome test real-sheet flows and mobile layout; review all requirements.
-- [ ] Push main, observe deployment and verify the same flows on production; record evidence.
+- [x] Push main, observe deployment and verify the same flows on production; record evidence.
