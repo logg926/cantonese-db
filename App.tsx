@@ -4,6 +4,7 @@ import { WorkItem, FilterState, ViewMode, SortOption } from "./types";
 import Sidebar from "./components/Sidebar";
 import CoverArt from "./components/CoverArt";
 import ProductModal from "./components/ProductModal";
+import { compareWorks, formatDuration, matchesDuration, matchesExplore } from "./utils/catalogue";
 import { matchesSearch } from "./utils/search";
 import {
   matchesAccompanimentFilters,
@@ -11,15 +12,17 @@ import {
 } from "./utils/filters";
 
 const FILTER_LABELS: Record<string, string> = {
-  Mixed: "混聲合唱 Mixed Choir",
-  High: "高音聲部 High Voices",
-  Low: "低音聲部 Low Voices",
+  audio: "錄音試聽 With Audio",
+  score: "樂譜試閱 With Score",
+  Mixed: "混聲合唱 SAB, SATB, etc.",
+  High: "高音聲部 SA, SSA, etc.",
+  Low: "低音聲部 TB, TTB, etc.",
   Unison: "單聲部 Unison",
   "A cappella": "無伴奏 A cappella",
   Piano: "鋼琴 Piano",
   Organ: "管風琴 Organ",
-  Western: "西樂 Western Inst.",
-  Chinese: "中樂 Chinese Inst.",
+  Western: "西樂 Western Instruments",
+  Chinese: "中樂 Chinese Instruments",
 };
 
 const App: React.FC = () => {
@@ -36,6 +39,8 @@ const App: React.FC = () => {
     voice: [],
     accompaniment: [],
     composer: [],
+    explore: [],
+    duration: [0, 6],
   });
   const [sort, setSort] = useState<SortOption>("year-desc");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -97,16 +102,13 @@ const App: React.FC = () => {
           filters.accompaniment,
         );
 
-        return matchSearch && matchComp && matchVoice && matchAccompaniment;
+        return matchSearch && matchComp && matchVoice && matchAccompaniment &&
+          matchesDuration(item.duration, filters.duration) && matchesExplore(item, filters.explore);
       })
-      .sort((a, b) => {
-        if (sort === "year-desc") return (b.year || 0) - (a.year || 0);
-        if (sort === "year-asc") return (a.year || 0) - (b.year || 0);
-        return (a.titleC || "").localeCompare(b.titleC || "");
-      });
+      .sort((a, b) => compareWorks(a, b, sort));
   }, [data, filters, sort]);
 
-  const removeFilter = (key: keyof FilterState, val: string) => {
+  const removeFilter = (key: "voice" | "accompaniment" | "composer" | "explore", val: string) => {
     setFilters((prev) => ({
       ...prev,
       [key]: (prev[key] as string[]).filter((v) => v !== val),
@@ -138,17 +140,17 @@ const App: React.FC = () => {
             onClick={() => window.location.reload()}
           >
             <div className="w-9 h-9 sm:w-10 sm:h-10 bg-royal-900 text-white flex items-center justify-center font-serif text-xl font-bold rounded shadow-md border border-royal-700 flex-shrink-0">
-              合
+              <span className="relative -top-0.5">合</span>
             </div>
             <div className="flex flex-col min-w-0">
               <h1 className="font-serif text-base sm:text-xl font-bold text-royal-900 leading-none tracking-tight whitespace-nowrap">
                 粵語合唱音樂資料庫
               </h1>
-              <span className="text-[11px] font-medium tracking-[0.08em] text-royal-700 mt-1">
-                Cantonese Choral Database
+              <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.12em] text-gold-500 mt-1">
+                CANTONESE CHORAL DATABASE
               </span>
-              <span className="text-[8px] sm:text-[9px] leading-tight font-mono tracking-[0.04em] sm:tracking-[0.06em] text-gold-600 mt-0.5 max-w-[190px] sm:max-w-none">
-                由粵語合唱作品庫提供 Powered by Cantonese Choral Comp
+              <span className="text-[9px] sm:text-[11px] leading-snug font-sans text-gray-500 mt-1 max-w-[240px] sm:max-w-none">
+                Powered by <a href="https://cantonesecomposition.com" onClick={e => e.stopPropagation()} className="font-semibold text-royal-900 hover:underline">Cantonese Contemporary Music Research</a>
               </span>
             </div>
           </div>
@@ -173,7 +175,7 @@ const App: React.FC = () => {
               <div className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">
                 典藏總數 Total Archive
               </div>
-              <div className="text-xl font-mono font-bold text-royal-900 leading-none">
+              <div className="text-xl font-sans font-bold text-royal-900 leading-none">
                 {data.length}
               </div>
             </div>
@@ -202,7 +204,7 @@ const App: React.FC = () => {
           onMobileClose={() => setMobileFilterOpen(false)}
         />
 
-        <main className="flex-1 p-6 lg:p-10 bg-white relative min-h-screen">
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-10 bg-white relative min-h-screen">
           <div className="md:hidden grid grid-cols-2 mb-6 border-b border-gray-200">
             <button
               onClick={() => setView("works")}
@@ -269,9 +271,8 @@ const App: React.FC = () => {
                       <option value="year-asc">
                         年份（舊至新）Year (Oldest to Newest)
                       </option>
-                      <option value="title-asc">
-                        作品名稱（A–Z）Title (A–Z)
-                      </option>
+                      <option value="id-desc">最新加入 Latest Entry</option>
+                      <option value="id-asc">最先加入 Oldest Entry</option>
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
                       <i className="fa-solid fa-arrow-down-short-wide text-xs"></i>
@@ -283,6 +284,7 @@ const App: React.FC = () => {
               {/* Active Tags */}
               <div className="flex flex-wrap gap-2 mb-6 min-h-[0px]">
                 {[
+                  ...filters.explore,
                   ...filters.voice,
                   ...filters.accompaniment,
                   ...filters.composer,
@@ -290,7 +292,9 @@ const App: React.FC = () => {
                   <button
                     key={idx}
                     onClick={() => {
-                      if (filters.voice.includes(tag))
+                      if (filters.explore.includes(tag))
+                        removeFilter("explore", tag);
+                      else if (filters.voice.includes(tag))
                         removeFilter("voice", tag);
                       else if (filters.accompaniment.includes(tag))
                         removeFilter("accompaniment", tag);
@@ -308,6 +312,11 @@ const App: React.FC = () => {
                 {filteredData.map((item, idx) => (
                   <div
                     key={item.id}
+                    data-work-id={item.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${item.titleC} ${item.titleE}`}
+                    onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedItem(item); } }}
                     className="group cursor-pointer flex flex-col gap-3 animate-fade-in"
                     style={{ animationDelay: `${idx < 15 ? idx * 50 : 0}ms` }}
                     onClick={() => setSelectedItem(item)}
@@ -328,16 +337,16 @@ const App: React.FC = () => {
                           {item.composerC}
                           {item.composerE && ` ${item.composerE}`}
                         </span>
-                        <span className="text-[10px] font-mono text-gray-400 bg-gray-100 px-1 rounded whitespace-nowrap">
+                        <span className="text-[10px] font-sans text-gray-400 bg-gray-100 px-1 rounded whitespace-nowrap">
                           {item.voice}
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[9px] text-gray-400">
                         <span>
-                          錄音 Audio {item.link ? "✓" : "N/A"}
+                          {item.year || "年份不詳 Year N/A"}
                         </span>
                         <span>
-                          樂譜 Score {item.perusalScore ? "✓" : "N/A"}
+                          {formatDuration(item.duration)}
                         </span>
                       </div>
                     </div>
@@ -360,6 +369,8 @@ const App: React.FC = () => {
                         voice: [],
                         accompaniment: [],
                         composer: [],
+                        explore: [],
+                        duration: [0, 6],
                       })
                     }
                     className="mt-4 text-royal-800 text-sm font-bold hover:underline"
@@ -411,7 +422,7 @@ const App: React.FC = () => {
                       <p className="text-xs text-gray-500 uppercase tracking-widest mb-4 truncate w-full">
                         {c.e}
                       </p>
-                      <span className="text-[10px] font-mono bg-white border border-gray-200 px-2 py-1 rounded-full text-gray-400 group-hover:border-royal-200 group-hover:text-royal-800 transition-colors">
+                      <span className="text-[10px] font-sans bg-white border border-gray-200 px-2 py-1 rounded-full text-gray-400 group-hover:border-royal-200 group-hover:text-royal-800 transition-colors">
                         作品數 Works: {c.count}
                       </span>
                     </div>

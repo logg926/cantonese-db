@@ -24,8 +24,10 @@ export interface FilterState {
     voice: string[];
     accompaniment: string[];
     composer: string[];
+    explore: string[];
+    duration: [number, number];
 }
 
-export type SortOption = 'year-desc' | 'year-asc' | 'title-asc';
+export type SortOption = 'year-desc' | 'year-asc' | 'id-desc' | 'id-asc';
 
 export type ViewMode = 'works' | 'composers';

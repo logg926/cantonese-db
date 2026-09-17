@@ -29,8 +29,8 @@ export const matchesVoiceFilters = (voice: string, filters: string[]) => {
     if (filter === "Low") {
       return (
         normalizedVoice.includes("low voice") ||
-        normalizedVoice.includes("men") ||
-        normalizedVoice.includes("male") ||
+        /\bmen\b/.test(normalizedVoice) ||
+        /\bmale\b/.test(normalizedVoice) ||
         hasLowCode
       );
     }

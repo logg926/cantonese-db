@@ -1,6 +1,7 @@
 import React from 'react';
 import { WorkItem } from '../types';
 import CoverArt from './CoverArt';
+import { formatDuration, mediaUrl } from '../utils/catalogue';
 
 interface ProductModalProps {
     item: WorkItem | null;
@@ -23,7 +24,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ item, onClose }) => {
                 <button
                     onClick={onClose}
                     aria-label="關閉 Close"
-                    className="absolute top-4 right-4 z-20 w-8 h-8 bg-black/10 hover:bg-black/20 text-gray-800 rounded-full flex items-center justify-center transition-colors"
+                    className="absolute top-4 left-4 md:left-auto md:right-4 z-30 w-8 h-8 bg-white/90 hover:bg-white text-gray-800 rounded-full flex items-center justify-center transition-colors"
                 >
                     <i className="fa-solid fa-times"></i>
                 </button>
@@ -40,13 +41,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ item, onClose }) => {
                     <div className="flex-1 overflow-y-auto p-8 md:p-12 custom-scrollbar min-h-0">
                         
                         <div className="flex items-center gap-2 mb-4 flex-wrap">
-                            <span className="px-2 py-1 bg-royal-900 text-white text-[10px] font-bold font-mono uppercase tracking-wider">{item.voice || '聲部不詳 Voice N/A'}</span>
-                            <span className="px-2 py-1 bg-gold-400 text-white text-[10px] font-bold font-mono">{item.year || '年份不詳 Year N/A'}</span>
+                            <span className="px-2 py-1 bg-royal-900 text-white text-[10px] font-bold font-sans uppercase tracking-wider">{item.voice || '聲部不詳 Voice N/A'}</span>
+                            <span className="px-2 py-1 bg-gold-400 text-white text-[10px] font-bold font-sans">{item.year || '年份不詳 Year N/A'}</span>
                             {item.textType && (
-                                <span className="px-2 py-1 bg-emerald-600 text-white text-[10px] font-bold font-mono">{item.textType}</span>
+                                <span className="px-2 py-1 bg-emerald-600 text-white text-[10px] font-bold font-sans">{item.textType}</span>
                             )}
                             {item.textFirst && (
-                                <span className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold font-mono">先詞後曲 Text First</span>
+                                <span className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold font-sans">先詞後曲 Text First</span>
                             )}
                         </div>
 
@@ -55,24 +56,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ item, onClose }) => {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-8 mb-10">
                             <div className="border-l-2 border-gold-400 pl-4">
-                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">作曲家 Composer</h4>
+                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-sans">作曲家 Composer</h4>
                                 <p className="text-lg font-bold text-royal-900">{item.composerC}{item.composerE && ` ${item.composerE}`}</p>
                             </div>
                             <div className="border-l-2 border-gray-200 pl-4">
-                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">作詞者 Lyricist</h4>
+                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-sans">作詞者 Lyricist</h4>
                                 <p className="text-lg font-medium text-gray-800">{item.author || "未註明 Not specified"}</p>
                             </div>
                             <div className="border-l-2 border-gray-200 pl-4">
-                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">編制 Instrumentation</h4>
-                                <p className="text-sm text-gray-600 font-mono">{item.instrument || "未註明 N/A"}</p>
+                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-sans">編制 Instrumentation</h4>
+                                <p className="text-sm text-gray-600 font-sans">{item.instrument || "未註明 N/A"}</p>
                             </div>
                             <div className="border-l-2 border-gray-200 pl-4">
-                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">時長 Duration</h4>
-                                <p className="text-sm text-gray-600 font-mono">{item.duration || "未註明 N/A"}</p>
+                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-sans">時長 Duration</h4>
+                                <p className="text-sm text-gray-600 font-sans">{formatDuration(item.duration)}</p>
                             </div>
                             {item.otherLanguages && (
                                 <div className="border-l-2 border-gray-200 pl-4">
-                                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">其他語言 Other Languages</h4>
+                                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 font-sans">其他語言 Other Languages</h4>
                                     <p className="text-sm text-gray-600">{item.otherLanguages}</p>
                                 </div>
                             )}
@@ -86,8 +87,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ item, onClose }) => {
                     </div>
 
                     <div className="p-6 border-t border-gray-100 flex items-center gap-4 bg-gray-50 flex-wrap">
-                        {item.link ? (
-                            <a href={item.link} target="_blank" rel="noreferrer" className="flex-1 min-w-[200px] bg-royal-900 text-white py-4 text-center font-bold hover:bg-royal-800 transition-all flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 rounded">
+                        {mediaUrl(item.link) ? (
+                            <a href={mediaUrl(item.link)!} target="_blank" rel="noreferrer" className="flex-1 min-w-[200px] bg-royal-900 text-white py-4 text-center font-bold hover:bg-royal-800 transition-all flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 rounded">
                                 <i className="fa-solid fa-play"></i>
                                 <span>觀看演出／聆聽錄音 Watch / Listen</span>
                             </a>
@@ -97,8 +98,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ item, onClose }) => {
                                 <span>暫無錄音 Audio N/A</span>
                             </button>
                         )}
-                        {item.perusalScore ? (
-                            <a href={item.perusalScore} target="_blank" rel="noreferrer" className="flex-1 min-w-[200px] bg-emerald-600 text-white py-4 text-center font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 rounded">
+                        {mediaUrl(item.perusalScore) ? (
+                            <a href={mediaUrl(item.perusalScore)!} target="_blank" rel="noreferrer" className="flex-1 min-w-[200px] bg-emerald-600 text-white py-4 text-center font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 shadow-lg hover:-translate-y-1 rounded">
                                 <i className="fa-solid fa-file-pdf"></i>
                                 <span>瀏覽樂譜 View Score</span>
                             </a>

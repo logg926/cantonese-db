@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FilterState } from "../types";
 import { matchesSearch } from "../utils/search";
 
@@ -19,9 +19,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   mobileOpen,
   onMobileClose,
 }) => {
+  const panel = useRef<HTMLElement>(null);
+  useEffect(() => { if (mobileOpen) panel.current?.scrollTo({ top: 0 }); }, [mobileOpen]);
+
   const [composerSearch, setComposerSearch] = useState("");
 
-  const toggleFilter = (category: keyof FilterState, value: string) => {
+  const toggleFilter = (category: "voice" | "accompaniment" | "composer" | "explore", value: string) => {
     setFilters((prev) => {
       const current = prev[category] as string[];
       if (current.includes(value)) {
@@ -37,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const clearFilters = () => {
-    setFilters({ search: "", voice: [], accompaniment: [], composer: [] });
+    setFilters({ search: "", voice: [], accompaniment: [], composer: [], explore: [], duration: [0, 6] });
     setComposerSearch("");
   };
 
@@ -59,8 +62,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar - Desktop: static, Mobile: slide-in panel */}
       <aside
+        ref={panel}
         className={`
-            w-80 flex-shrink-0 border-r border-gray-100 bg-[#FAFAFA] p-6 overflow-y-auto custom-scrollbar transition-all duration-300
+            w-80 max-w-full flex-shrink-0 border-r border-gray-100 bg-[#FAFAFA] p-6 overflow-y-auto custom-scrollbar transition-all duration-300
             lg:block lg:h-[calc(100vh-80px)] lg:sticky lg:top-20
             fixed top-0 right-0 h-full z-50
             ${mobileOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}
@@ -98,9 +102,30 @@ const Sidebar: React.FC<SidebarProps> = ({
           />
         </div>
 
+        <div className="mb-6 border-b border-gray-100 pb-5">
+          <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">探索 Explore</h4>
+          <div className="space-y-2">
+            {[["audio", "錄音試聽 With Audio"], ["score", "樂譜試閱 With Score"]].map(([value, label]) => (
+              <label key={value} className="flex items-center gap-3 cursor-pointer p-1 text-sm text-gray-700">
+                <input type="checkbox" className="dcc-checkbox" checked={filters.explore.includes(value)} onChange={() => toggleFilter("explore", value)} />
+                {label}
+              </label>
+            ))}
+          </div>
+        </div>
+        <div className="mb-6 border-b border-gray-100 pb-5">
+          <h4 id="duration-heading" className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">時長 Duration (min)</h4>
+          <output className="block text-lg font-semibold text-royal-900 mb-3" aria-live="polite">{filters.duration[0]}–{filters.duration[1] === 10 ? '10+' : filters.duration[1]}</output>
+          <div className="duration-slider relative h-6" style={{'--range-start': `${filters.duration[0] * 10}%`, '--range-end': `${filters.duration[1] * 10}%`} as React.CSSProperties}>
+            <div className="duration-track" />
+            <input type="range" min="0" max="10" step="0.5" aria-label="最短時長 Minimum duration" value={filters.duration[0]} onChange={e => setFilters(prev => ({...prev, duration: [Math.min(Number(e.target.value), prev.duration[1] - 1), prev.duration[1]]}))} />
+            <input type="range" min="0" max="10" step="0.5" aria-label="最長時長 Maximum duration" value={filters.duration[1]} onChange={e => setFilters(prev => ({...prev, duration: [prev.duration[0], Math.max(Number(e.target.value), prev.duration[0] + 1)]}))} />
+          </div>
+          <div className="flex justify-between text-xs text-gray-400 mt-1"><span>0</span><span>10+</span></div>
+        </div>
         {/* Voice Type */}
         <div className="filter-section mb-6 border-b border-gray-100 pb-5">
-          <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest font-mono mb-3">
+          <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest font-sans mb-3">
             聲部 Voice Type
           </h4>
           <div className="space-y-2">
@@ -117,11 +142,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                 />
                 <span className="text-sm text-gray-700">
                   {v === "Mixed"
-                    ? "混聲合唱 Mixed Choir — SAB, SATB, etc."
+                    ? "混聲合唱 SAB, SATB, etc."
                     : v === "High"
-                      ? "高音聲部 High Voices — SA, SSA, etc."
+                      ? "高音聲部 SA, SSA, etc."
                       : v === "Low"
-                        ? "低音聲部 Low Voices — TB, TTB, etc."
+                        ? "低音聲部 TB, TTB, etc."
                         : "單聲部 Unison"}
                 </span>
               </label>
@@ -131,7 +156,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Accompaniment */}
         <div className="filter-section mb-6 border-b border-gray-100 pb-5">
-          <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest font-mono mb-3">
+          <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest font-sans mb-3">
             伴奏 Accompaniment
           </h4>
           <div className="space-y-2">
@@ -154,8 +179,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                       : v === "Organ"
                         ? "管風琴 Organ"
                         : v === "Western"
-                          ? "西樂 Western Inst."
-                          : "中樂 Chinese Inst."}
+                          ? "西樂 Western Instruments"
+                          : "中樂 Chinese Instruments"}
                 </span>
               </label>
             ))}
@@ -165,7 +190,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Composers */}
         <div className="filter-section">
           <div className="flex justify-between items-center mb-3">
-            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest font-mono">
+            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest font-sans">
               作曲家 Composer
             </h4>
           </div>

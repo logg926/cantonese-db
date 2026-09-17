@@ -39,9 +39,7 @@ const CoverArt: React.FC<CoverArtProps> = ({ item }) => {
                             <h3 className={`text-2xl font-bold font-serif leading-none mb-1 ${t.text}`}>{item.titleC}</h3>
                             <p className={`text-[10px] font-sans uppercase tracking-widest opacity-80 ${t.text}`}>{item.composerE}</p>
                         </div>
-                        <div className={`absolute top-4 right-4 border border-current px-1.5 py-0.5 text-[10px] font-mono ${t.text} opacity-60`}>
-                            {item.year || '年份不詳 Year N/A'}
-                        </div>
+
                     </>
                 );
             case 1: // Vertical
@@ -56,7 +54,7 @@ const CoverArt: React.FC<CoverArtProps> = ({ item }) => {
                                  {item.composerE}
                              </div>
                         </div>
-                        <div className={`absolute bottom-4 left-4 text-[10px] font-mono ${t.sub}`}>{item.voice}</div>
+                        <div className={`absolute bottom-4 left-4 text-[10px] font-sans ${t.sub}`}>{item.voice}</div>
                     </>
                 );
             case 2: // Centered
@@ -65,7 +63,7 @@ const CoverArt: React.FC<CoverArtProps> = ({ item }) => {
                         <div className={`w-1 h-8 bg-current opacity-50 mb-4 ${t.text}`}></div>
                         <h3 className={`text-2xl font-serif font-bold ${t.text} mb-2`}>{item.titleC}</h3>
                         <p className={`text-[9px] uppercase tracking-widest ${t.text} opacity-70`}>{item.titleE || '英文標題不詳 English title N/A'}</p>
-                        <div className={`absolute bottom-2 font-mono text-[9px] ${t.text} opacity-50`}>{item.composerC}</div>
+                        <div className={`absolute bottom-2 font-sans text-[9px] ${t.text} opacity-50`}>{item.composerC}</div>
                     </div>
                 );
             case 3: // Geometric
@@ -87,6 +85,7 @@ const CoverArt: React.FC<CoverArtProps> = ({ item }) => {
     return (
         <div className={`art-box ${t.bg} w-full h-full relative overflow-hidden transition-transform duration-500 group-hover:scale-105`}>
             {renderInner()}
+            <span className="absolute top-2 right-2 z-20 rounded bg-white/95 px-2 py-1 text-[10px] font-sans font-semibold text-royal-900 shadow-sm">{item.year || "年份不詳 Year N/A"}</span>
         </div>
     );
 };
