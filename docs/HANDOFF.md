@@ -1,5 +1,9 @@
 # Session handoff — 2026-09-18
 
+## Shared app status — 2026-10-01
+
+The app's later 09.22 screenshot changes (`cantonese-v4` commit `8370402`) are now production-verified in Chrome: converter title 粵語旋律聲調轉換器, removed Creative Tool / 02 label, desktop/390px layout. Live numeric generation, pagination, 六四一 flat spelling and the repeated-note converter example passed with loaded scores and no mobile page overflow. This closes the app verification gap; no database requirement changed or database recheck was performed. Full evidence is in `../cantonese-v4/docs/revision-audit.md`. The 09.30 source-document check found no revisions newer than 09.18 and no comment threads.
+
 ## Current status
 
 All requirements reviewed through the document's **2026.09.18** tab are implemented, pushed and production-verified. **No known outstanding request from those reviewed revisions.** This is a dated checkpoint, not a claim that the professor cannot add more changes.
