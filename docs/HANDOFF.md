@@ -46,3 +46,8 @@ Database: logo/attribution/English styling, consistent year badges, card/modal d
 3. Assign requests to the correct repository. The app report's old database backlog is completed in the sibling repo, not still pending.
 4. Reproduce behavior and add meaningful regression coverage. Tests of a helper alone did not previously prove the actual generator used it: verify real input → worker → results → score through Chrome.
 5. User has authorized implementation, tests, pushes and production checks in this conversation. Main pushes triggered automatic deployment; wait for observable new behavior on the correct production URL before claiming deployment. Restore temporary browser viewport overrides.
+
+
+## Duration default follow-up — 2026-11-13
+
+Professor requested default 0–10+. Updated initial state, sidebar Reset and empty-results Clear Filters from [0, 6] to [0, 10]; 10 remains open-ended. Supersedes the historical 0–6 requirement above. Chrome localhost verified initial 286 results, narrowing to 6, Reset to 0–10+ / 286, no-match search then Clear Filters to 0–10+ / 286. Six tests / 32 assertions, typecheck, production build and diff check passed. Main push authorized; deployment not yet verified. Companion art-song update renames Audio Available to With Audio and matches the score label font; its local filter/reset checks and four tests passed.

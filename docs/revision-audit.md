@@ -43,3 +43,8 @@ The Melody Generator and converter changes belong to the separate cantonese-v4 p
 ## Production verification
 
 Revision a8998f9 reached the production domain through automatic deployment after push. Chrome confirmed 233 default works, 61 audio, 34 score, 2 both, IDs 286/001 at the two entry-sort extremes, all 286 at 10+, and correct modal links/duration. The final 390px production check found a long voice label overflowing its card; the follow-up constrains that badge while preserving its complete text in the detail modal.
+
+
+## Duration default follow-up — 2026-11-13
+
+Professor requested default 0–10+. Updated initial state, sidebar Reset and empty-results Clear Filters from [0, 6] to [0, 10]; 10 remains open-ended. Supersedes the historical 0–6 requirement above. Chrome localhost verified initial 286 results, narrowing to 6, Reset to 0–10+ / 286, no-match search then Clear Filters to 0–10+ / 286. Six tests / 32 assertions, typecheck, production build and diff check passed. Main push authorized; deployment not yet verified. Companion art-song update renames Audio Available to With Audio and matches the score label font; its local filter/reset checks and four tests passed.

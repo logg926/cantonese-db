@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const clearFilters = () => {
-    setFilters({ search: "", voice: [], accompaniment: [], composer: [], explore: [], duration: [0, 6] });
+    setFilters({ search: "", voice: [], accompaniment: [], composer: [], explore: [], duration: [0, 10] });
     setComposerSearch("");
   };
 

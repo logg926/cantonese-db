@@ -40,7 +40,7 @@ const App: React.FC = () => {
     accompaniment: [],
     composer: [],
     explore: [],
-    duration: [0, 6],
+    duration: [0, 10],
   });
   const [sort, setSort] = useState<SortOption>("year-desc");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -370,7 +370,7 @@ const App: React.FC = () => {
                         accompaniment: [],
                         composer: [],
                         explore: [],
-                        duration: [0, 6],
+                        duration: [0, 10],
                       })
                     }
                     className="mt-4 text-royal-800 text-sm font-bold hover:underline"

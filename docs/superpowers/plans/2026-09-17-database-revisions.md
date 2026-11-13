@@ -12,3 +12,5 @@
 - [x] Apply exact voice labels and Instruments; verify prior keyword/composer search and accompaniment behaviour.
 - [x] Run test/typecheck/build; Chrome test real-sheet flows and mobile layout; review all requirements.
 - [x] Push main, observe deployment and verify the same flows on production; record evidence.
+
+- [x] 2026-11-13 superseding request: default and both reset paths use 0–10+; browser flows, tests, typecheck and build passed. Authorized main push; deployment verification pending.
