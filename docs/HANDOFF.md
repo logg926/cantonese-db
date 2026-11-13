@@ -53,3 +53,8 @@ Database: logo/attribution/English styling, consistent year badges, card/modal d
 Professor requested default 0–10+. Updated initial state, sidebar Reset and empty-results Clear Filters from [0, 6] to [0, 10]; 10 remains open-ended. Supersedes the historical 0–6 requirement above. Chrome localhost verified initial 286 results, narrowing to 6, Reset to 0–10+ / 286, no-match search then Clear Filters to 0–10+ / 286. Six tests / 32 assertions, typecheck, production build and diff check passed. Main push authorized; deployment not yet verified. Companion art-song update renames Audio Available to With Audio and matches the score label font; its local filter/reset checks and four tests passed.
 
 Release outcome: choral `66ac9ad` and art-song `2d10ced` successfully pushed to their respective origin/main branches. Immediate live checks still show previous assets/text; deployment verification pending.
+
+
+## Shared Creative Suite release — 2026-11-13 evening
+
+Sibling cantonese-v4 `0136a1c` is pushed and Render/live-browser verified at app.cantonesecomposition.com. Converter/checker use the professor’s piano-input mockup; About hidden from navigation, full checker name and revised centered copy/results applied. All three tools allow exact 636/656 (+1, −3) / (+3, −1) exceptions; checker alone allows −1 for 11/12/21/22. 60 tests and app build passed, live generator/converter/checker flows and 390px checker passed with loaded scores/no overflow. Full evidence and screenshot checklist are in cantonese-v4/docs/. No database code or sheet changed. WhatsApp draft prepared for user review; no message sent.
