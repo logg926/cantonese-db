@@ -48,3 +48,5 @@ Revision a8998f9 reached the production domain through automatic deployment afte
 ## Duration default follow-up — 2026-11-13
 
 Professor requested default 0–10+. Updated initial state, sidebar Reset and empty-results Clear Filters from [0, 6] to [0, 10]; 10 remains open-ended. Supersedes the historical 0–6 requirement above. Chrome localhost verified initial 286 results, narrowing to 6, Reset to 0–10+ / 286, no-match search then Clear Filters to 0–10+ / 286. Six tests / 32 assertions, typecheck, production build and diff check passed. Main push authorized; deployment not yet verified. Companion art-song update renames Audio Available to With Audio and matches the score label font; its local filter/reset checks and four tests passed.
+
+Release outcome: choral `66ac9ad` and art-song `2d10ced` successfully pushed to their respective origin/main branches. Immediate live checks still show previous assets/text; deployment verification pending.
